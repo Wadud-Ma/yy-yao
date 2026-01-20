@@ -1,0 +1,121 @@
+spring:
+  application:
+    name: yy-yao
+
+  # Spring AI OpenAI Configuration
+  ai:
+    openai:
+      api-key: ${OPENAI_API_KEY:sk-LinkSpaceSfEPzoeclh15nZVaQU64B3TMtm}
+      base-url: ${OPENAI_BASE_URL:http://10.231.128.181:8080}
+      chat:
+        options:
+          model: ${OPENAI_MODEL:ke/gpt-5-chat}
+          temperature: 0.7
+          max-tokens: 2048
+
+  # Database Configuration - MySQL
+  datasource:
+    url: jdbc:mysql://10.231.78.39:12183/yy-yao?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: mSBsDMM44OA92MWb
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 5
+      idle-timeout: 300000
+      max-lifetime: 1200000
+      connection-timeout: 30000
+
+  # JPA Configuration
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        format_sql: true
+        jdbc:
+          batch_size: 20
+        order_inserts: true
+        order_updates: true
+
+  # File Upload Configuration
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+  # Mail Configuration (if email notification is enabled)
+  mail:
+    host: ${MAIL_HOST:smtp.gmail.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+# Server Configuration
+server:
+  port: 9091
+
+# JWT Configuration
+jwt:
+  secret: ${JWT_SECRET:your-secret-key-must-be-at-least-32-characters-long-for-security}
+  expiration: 86400000
+
+# Application Configuration
+app:
+  name: 易经卜卦服务
+  version: 1.0.0
+  auth-enabled: true
+  ai-enabled: false
+  max-divinations-per-day: 10
+
+# Storage Configuration
+storage:
+  type: local
+  local:
+    base-path: ./uploads
+    base-url: http://localhost:8080/uploads
+
+# Notification Configuration
+notification:
+  email:
+    enabled: ${NOTIFICATION_EMAIL_ENABLED:false}
+    from: ${NOTIFICATION_EMAIL_FROM:noreply@yy-yao.com}
+  admin:
+    email: ${NOTIFICATION_ADMIN_EMAIL:}
+
+# Actuator Configuration
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,env
+  endpoint:
+    health:
+      show-details: when-authorized
+  info:
+    env:
+      enabled: true
+
+# Logging
+logging:
+  level:
+    com.yy.yao: INFO
+    org.springframework.security: INFO
+    org.springframework.orm.jpa: INFO
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+  pattern:
+    console: '%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n'
+
+# Example configurations for different providers:
+# OpenAI: OPENAI_BASE_URL=https://api.openai.com, OPENAI_MODEL=gpt-4
+# Custom Proxy: OPENAI_BASE_URL=http://test-ls-llm-proxy.ke.com:8080, OPENAI_API_KEY=sk-xxx, OPENAI_MODEL=ke/gpt-5-chat
