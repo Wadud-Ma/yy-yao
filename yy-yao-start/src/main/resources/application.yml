@@ -2,14 +2,15 @@ spring:
   application:
     name: yy-yao
 
-  # Spring AI OpenAI Configuration
+  # Spring AI OpenAI Compatible Configuration
+  # 支持 OpenAI 兼容的 API，包括腾讯混元
   ai:
     openai:
-      api-key: ${OPENAI_API_KEY:sk-LinkSpaceSfEPzoeclh15nZVaQU64B3TMtm}
-      base-url: ${OPENAI_BASE_URL:http://10.231.128.181:8080}
+      api-key: ${OPENAI_API_KEY:eyJhbGciOiJSUzI1NiIsImtpZCI6IjlkMWRjMzFlLWI0ZDAtNDQ4Yi1hNzZmLWIwY2M2M2Q4MTQ5OCJ9.eyJhdWQiOiJ5eXktOWdhOWk4OWg2ZTU1ZWZiMSIsImV4cCI6MjUzNDAyMzAwNzk5LCJpYXQiOjE3Njg5MTQ4MzcsImF0X2hhc2giOiJMV0pZd0IxX1RHaXJHR1d0VERVdGdnIiwicHJvamVjdF9pZCI6Inl5eS05Z2E5aTg5aDZlNTVlZmIxIiwibWV0YSI6eyJwbGF0Zm9ybSI6IkFwaUtleSJ9LCJhZG1pbmlzdHJhdG9yX2lkIjoiMjAxMzQzMzY2NDUzNTMxODUzMCIsInVzZXJfdHlwZSI6IiIsImNsaWVudF90eXBlIjoiY2xpZW50X3NlcnZlciIsImlzX3N5c3RlbV9hZG1pbiI6dHJ1ZX0.lpY3uBOeuQ6TURvegodNl-CEvqPL2MylHQufkbdSotc60-kX-NlXHKngFlyy5gbCdsGeSN3JM8YNjkwMGCTAiFBaj8rYAOyQ2oGdLfeHn0T01RXdisNV3oFw9HbDLSUsn57gt_SG8lZwSnu-QSsb6MYO3TyHUG_oP_aaPgzBw1od4ANpEXT_NO5UThCs52Q5CvVLoFRS2MafdzZ0dU9shL_VTF-bYIcPHjLB_2sK5eVVDv9yu3RCJRqIQw6KOPOo_GeCbTGYMC3tdkZrqkDH21mn5Bp2S0Da_zabMvWEAE-RCwQf6ctWFEHW0eaIRKYFlBmtPKvpzBFrjCiyoGSyBw}
+      base-url: ${OPENAI_BASE_URL:https://yyy-9ga9i89h6e55efb1.api.tcloudbasegateway.com/v1/ai/hunyuan-exp}
       chat:
         options:
-          model: ${OPENAI_MODEL:ke/gpt-5-chat}
+          model: ${OPENAI_MODEL:hunyuan-turbos-latest}
           temperature: 0.7
           max-tokens: 2048
 
