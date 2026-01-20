@@ -15,10 +15,10 @@ spring:
 
   # Database Configuration - MySQL
   datasource:
-    url: jdbc:mysql://10.231.78.39:12183/yy-yao?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://sh-cynosdbmysql-grp-r6x47bhs.sql.tencentcdb.com:23359/yy-yao?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
-    password: mSBsDMM44OA92MWb
+    password: Fmx@7***
     hikari:
       maximum-pool-size: 10
       minimum-idle: 5
