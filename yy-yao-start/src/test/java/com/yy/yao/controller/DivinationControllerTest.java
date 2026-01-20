@@ -69,7 +69,7 @@ class DivinationControllerTest {
     @Test
     void testGetHexagramEndpoint() {
         Hexagram mockHexagram = new Hexagram(1, "乾", "☰☰", "111111",
-                "乾", "乾", "乾卦辞", "乾卦解释", new ArrayList<>());
+                "乾", "乾", "乾卦辞", "乾卦解释", "天行健", "自强不息", new ArrayList<>());
 
         when(divinationService.getHexagramByNumber(1))
                 .thenReturn(Optional.of(mockHexagram));
@@ -95,7 +95,7 @@ class DivinationControllerTest {
     void testGetAllHexagrams() {
         List<Hexagram> mockHexagrams = new ArrayList<>();
         mockHexagrams.add(new Hexagram(1, "乾", "☰☰", "111111",
-                "乾", "乾", "乾卦辞", "乾卦解释", new ArrayList<>()));
+                "乾", "乾", "乾卦辞", "乾卦解释", "天行健", "自强不息", new ArrayList<>()));
 
         when(divinationService.getAllHexagrams()).thenReturn(mockHexagrams);
 

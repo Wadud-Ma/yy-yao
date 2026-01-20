@@ -33,7 +33,7 @@ class HexagramRepositoryTest {
 
         assertTrue(kun.isPresent());
         assertEquals("坤", kun.get().getName());
-        assertEquals("000000", kun.get().getBinary());
+        assertEquals("000000", kun.get().getBinaryCode());
     }
 
     @Test
@@ -52,7 +52,7 @@ class HexagramRepositoryTest {
         Hexagram qian = hexagram.get();
 
         assertNotNull(qian.getName());
-        assertNotNull(qian.getBinary());
+        assertNotNull(qian.getBinaryCode());
         assertNotNull(qian.getStatement());
         assertNotNull(qian.getInterpretation());
         assertNotNull(qian.getLineStatements());

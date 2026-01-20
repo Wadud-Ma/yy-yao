@@ -22,8 +22,8 @@ COPY yy-yao-service/src /app/yy-yao-service/src
 COPY yy-yao-web/src /app/yy-yao-web/src
 COPY yy-yao-start/src /app/yy-yao-start/src
 
-# 构建项目（跳过测试以加快构建速度）
-RUN mvn -s /app/settings.xml clean package -DskipTests -B
+# 构建项目（完全跳过测试编译和执行以加快构建速度）
+RUN mvn -s /app/settings.xml clean package -Dmaven.test.skip=true -B
 
 # 运行阶段
 FROM ghcr.io/wadud-ma/java:21-jre
