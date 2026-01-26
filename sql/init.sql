@@ -136,7 +136,7 @@ CREATE TABLE divination_records (
                                     user_id BIGINT UNSIGNED NOT NULL,
                                     method ENUM('coin', 'manual', 'meihua', 'daily', 'qian') COMMENT '方式',
                                     question VARCHAR(500),
-                                    lines JSON COMMENT '[7,8,9,7,6,8]',
+                                    line_values JSON COMMENT '[7,8,9,7,6,8]',
                                     original_hexagram_id TINYINT UNSIGNED NOT NULL,
                                     changed_hexagram_id TINYINT UNSIGNED,
                                     changing_lines JSON COMMENT '[3,5]',
