@@ -36,6 +36,15 @@
             <scope>runtime</scope>
             <optional>true</optional>
         </dependency>
+
+        <!-- ==================== 测试依赖 ==================== -->
+
+        <!-- Spring Boot Starter Test (for @DataJpaTest, @SpringBootTest, etc.) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
