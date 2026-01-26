@@ -55,8 +55,8 @@ public class DivinationRecord {
     /**
      * 6爻数值 JSON格式: [7,8,9,7,6,8]
      */
-    @Column(name = "lines", columnDefinition = "JSON")
-    private String lines;
+    @Column(name = "line_values", columnDefinition = "JSON")
+    private String lineValues;
 
     /**
      * 本卦ID (1-64)
