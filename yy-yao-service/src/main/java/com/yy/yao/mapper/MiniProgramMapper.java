@@ -1,9 +1,10 @@
-package com.yy.yao.util;
+package com.yy.yao.mapper;
 
 import com.yy.yao.dto.DivinationResponse;
 import com.yy.yao.dto.MiniProgramDivinationResponse;
 import com.yy.yao.dto.MiniProgramHexagramDTO;
 import com.yy.yao.model.Hexagram;
+import org.springframework.stereotype.Component;
 
 import java.util.stream.Collectors;
 
@@ -11,12 +12,13 @@ import java.util.stream.Collectors;
  * 小程序数据映射工具
  * 将后端数据模型转换为小程序需要的格式
  */
+@Component
 public class MiniProgramMapper {
 
     /**
      * 将 Hexagram 转换为 MiniProgramHexagramDTO
      */
-    public static MiniProgramHexagramDTO toMiniProgramHexagram(Hexagram hexagram) {
+    public MiniProgramHexagramDTO toMiniProgramHexagram(Hexagram hexagram) {
         if (hexagram == null) {
             return null;
         }
@@ -40,7 +42,7 @@ public class MiniProgramMapper {
     /**
      * 将 DivinationResponse 转换为 MiniProgramDivinationResponse
      */
-    public static MiniProgramDivinationResponse toMiniProgramResponse(DivinationResponse response) {
+    public MiniProgramDivinationResponse toMiniProgramResponse(DivinationResponse response) {
         if (response == null) {
             return null;
         }
@@ -71,7 +73,7 @@ public class MiniProgramMapper {
      * 生成完整卦名
      * 例如: "乾为天"、"坤为地"、"水雷屯"
      */
-    private static String generateFullName(Hexagram hexagram) {
+    private String generateFullName(Hexagram hexagram) {
         if (hexagram == null) {
             return "未知卦";
         }
@@ -104,19 +106,19 @@ public class MiniProgramMapper {
     /**
      * 获取卦的五行属性
      */
-    private static String getTrigramElement(String trigram) {
+    private String getTrigramElement(String trigram) {
         if (trigram == null) return "";
 
-        switch (trigram) {
-            case "乾": return "天";
-            case "坤": return "地";
-            case "震": return "雷";
-            case "巽": return "风";
-            case "坎": return "水";
-            case "离": return "火";
-            case "艮": return "山";
-            case "兑": return "泽";
-            default: return trigram;
-        }
+        return switch (trigram) {
+            case "乾" -> "天";
+            case "坤" -> "地";
+            case "震" -> "雷";
+            case "巽" -> "风";
+            case "坎" -> "水";
+            case "离" -> "火";
+            case "艮" -> "山";
+            case "兑" -> "泽";
+            default -> trigram;
+        };
     }
 }

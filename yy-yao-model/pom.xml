@@ -3,6 +3,7 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <groupId>com.yy.yao</groupId>
         <artifactId>yy-yao</artifactId>
@@ -11,19 +12,27 @@
 
     <artifactId>yy-yao-model</artifactId>
     <name>yy-yao-model</name>
-    <description>数据模型模块 - Entity, DTO, VO, Enum</description>
+    <description>模型层 - 业务模型(Model)、数据传输对象(DTO)、枚举、常量</description>
 
     <dependencies>
-        <!-- Validation -->
+        <!-- ==================== 依赖核心层 ==================== -->
+        <dependency>
+            <groupId>com.yy.yao</groupId>
+            <artifactId>yy-yao-core</artifactId>
+        </dependency>
+
+        <!-- ==================== Spring 依赖 ==================== -->
+
+        <!-- Validation (for @NotNull, @NotEmpty, etc.) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
 
-        <!-- Jackson -->
+        <!-- Jackson (for JSON序列化注解 @JsonProperty, @JsonFormat) -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
+            <artifactId>jackson-annotations</artifactId>
         </dependency>
     </dependencies>
 </project>

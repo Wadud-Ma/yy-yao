@@ -3,6 +3,7 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <groupId>com.yy.yao</groupId>
         <artifactId>yy-yao</artifactId>
@@ -11,34 +12,31 @@
 
     <artifactId>yy-yao-core</artifactId>
     <name>yy-yao-core</name>
-    <description>核心模块 - 工具类, 配置, 常量, 异常</description>
+    <description>核心基础层 - JWT服务、基础配置、通用工具</description>
 
     <dependencies>
-        <dependency>
-            <groupId>com.yy.yao</groupId>
-            <artifactId>yy-yao-model</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.yy.yao</groupId>
-            <artifactId>yy-yao-dao</artifactId>
-        </dependency>
+        <!-- ==================== 无内部模块依赖 ==================== -->
 
-        <!-- Spring Boot -->
+        <!-- Spring Boot Starter -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
         </dependency>
 
-        <!-- Spring Web (for servlet API) -->
+        <!-- Spring Web (for WebMvcConfigurer, CORS) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
-        <!-- Spring Security -->
+        <!-- Spring Security (for JWT Filter基础功能) -->
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-security</artifactId>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-web</artifactId>
         </dependency>
 
         <!-- JWT -->
@@ -49,13 +47,15 @@
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-impl</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-jackson</artifactId>
+            <scope>runtime</scope>
         </dependency>
 
-        <!-- Jackson for ObjectMapper -->
+        <!-- Jackson (for JacksonConfig, JSON序列化) -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
@@ -65,7 +65,7 @@
             <artifactId>jackson-datatype-jsr310</artifactId>
         </dependency>
 
-        <!-- Configuration Processor -->
+        <!-- Configuration Processor (for @ConfigurationProperties) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>

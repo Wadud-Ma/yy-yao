@@ -1,5 +1,6 @@
 package com.yy.yao.service;
 
+import com.yy.yao.mapper.HexagramMapper;
 import com.yy.yao.model.DivinationRequest;
 import com.yy.yao.model.DivinationResult;
 import com.yy.yao.model.Hexagram;

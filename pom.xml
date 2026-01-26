@@ -17,12 +17,13 @@
     <description>易经卜卦服务 - 多模块项目</description>
 
     <modules>
-        <module>yy-yao-model</module>
+        <module>yy-yao-biz</module>
         <module>yy-yao-core</module>
         <module>yy-yao-dao</module>
+        <module>yy-yao-model</module>
         <module>yy-yao-service</module>
-        <module>yy-yao-web</module>
         <module>yy-yao-start</module>
+        <module>yy-yao-web</module>
     </modules>
 
     <properties>
@@ -71,6 +72,11 @@
             <dependency>
                 <groupId>com.yy.yao</groupId>
                 <artifactId>yy-yao-service</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.yy.yao</groupId>
+                <artifactId>yy-yao-biz</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

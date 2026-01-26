@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+         http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.yy.yao</groupId>
+        <artifactId>yy-yao</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>yy-yao-biz</artifactId>
+    <name>yy-yao-biz</name>
+    <description>业务编排层 - 组合多个Service实现复杂业务流程、事务管理、业务补偿</description>
+
+    <dependencies>
+        <!-- ==================== 依赖服务层 ==================== -->
+        <dependency>
+            <groupId>com.yy.yao</groupId>
+            <artifactId>yy-yao-service</artifactId>
+        </dependency>
+
+        <!-- ==================== Spring 依赖 ==================== -->
+
+        <!-- Spring Context (for @Service, @Component) -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+        </dependency>
+
+        <!-- Spring Transaction (for @Transactional) -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-tx</artifactId>
+        </dependency>
+    </dependencies>
+</project>

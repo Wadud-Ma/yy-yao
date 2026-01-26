@@ -1,5 +1,6 @@
 package com.yy.yao.service;
 
+import com.yy.yao.mapper.HexagramMapper;
 import com.yy.yao.model.Hexagram;
 import com.yy.yao.repository.HexagramRepository;
 import lombok.RequiredArgsConstructor;

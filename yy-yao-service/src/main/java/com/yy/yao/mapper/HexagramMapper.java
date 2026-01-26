@@ -1,11 +1,11 @@
-package com.yy.yao.service;
+package com.yy.yao.mapper;
 
 import com.yy.yao.entity.HexagramLine;
+import com.yy.yao.model.Hexagram;
 import com.yy.yao.repository.HexagramLineRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -24,18 +24,18 @@ public class HexagramMapper {
      * @param entity 数据库实体
      * @return 业务模型
      */
-    public com.yy.yao.model.Hexagram toModel(com.yy.yao.entity.Hexagram entity) {
+    public Hexagram toModel(com.yy.yao.entity.Hexagram entity) {
         if (entity == null) {
             return null;
         }
 
-        var model = new com.yy.yao.model.Hexagram();
+        var model = new Hexagram();
         model.setNumber(entity.getId());
         model.setName(entity.getName());
         model.setSymbol(entity.getUnicodeSymbol());
         model.setBinaryCode(entity.getSymbol());
 
-        // 从 Trigram 表获取上下卦名称（如需要，这里简化处理）
+        // 从 Trigram 表获取上下卦名称
         model.setUpperTrigram(getTrigramName(entity.getUpperTrigramId()));
         model.setLowerTrigram(getTrigramName(entity.getLowerTrigramId()));
 
@@ -56,7 +56,7 @@ public class HexagramMapper {
      * Entity List → Model List 批量转换
      * 使用 Java 21 的 Stream API
      */
-    public List<com.yy.yao.model.Hexagram> toModelList(List<com.yy.yao.entity.Hexagram> entities) {
+    public List<Hexagram> toModelList(List<com.yy.yao.entity.Hexagram> entities) {
         if (entities == null || entities.isEmpty()) {
             return List.of();
         }
@@ -68,14 +68,14 @@ public class HexagramMapper {
     /**
      * HexagramLine Entity → LineStatement Model
      */
-    private List<com.yy.yao.model.Hexagram.LineStatement> toLineStatements(List<HexagramLine> lines) {
+    private List<Hexagram.LineStatement> toLineStatements(List<HexagramLine> lines) {
         if (lines == null || lines.isEmpty()) {
             return List.of();
         }
 
         return lines.stream()
                 .map(line -> {
-                    var statement = new com.yy.yao.model.Hexagram.LineStatement();
+                    var statement = new Hexagram.LineStatement();
                     statement.setPosition(line.getPosition());
                     statement.setName(line.getName());
                     statement.setText(line.getLineText());
@@ -86,8 +86,8 @@ public class HexagramMapper {
     }
 
     /**
-     * 简化版：根据 Trigram ID 获取卦名
-     * 实际项目中可以注入 TrigramRepository
+     * 根据 Trigram ID 获取卦名
+     * 八卦对应关系: 1-乾, 2-兑, 3-离, 4-震, 5-巽, 6-坎, 7-艮, 8-坤
      */
     private String getTrigramName(Integer trigramId) {
         if (trigramId == null) {

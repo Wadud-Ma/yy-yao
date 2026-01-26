@@ -2,7 +2,6 @@ package com.yy.yao.controller;
 
 import com.yy.yao.config.AppConfig;
 import com.yy.yao.dto.ApiResponse;
-import com.yy.yao.service.LlmService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +26,6 @@ import java.util.Map;
 public class SystemController {
 
     private final DataSource dataSource;
-    private final LlmService llmService;
     private final AppConfig appConfig;
 
     /**
@@ -70,10 +68,6 @@ public class SystemController {
             status.getDependencies().put("database", "DOWN");
             status.setStatus("DEGRADED");
         }
-
-        // 检查 LLM 服务
-        status.getDependencies().put("llm", llmService.isAvailable() ? "CONFIGURED" : "NOT_CONFIGURED");
-
         return ResponseEntity.ok(ApiResponse.success(status));
     }
 

@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * 卜卦API控制器
+ * 卜卦控制器
  */
 @Slf4j
 @RestController

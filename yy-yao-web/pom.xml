@@ -3,6 +3,7 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <groupId>com.yy.yao</groupId>
         <artifactId>yy-yao</artifactId>
@@ -11,27 +12,38 @@
 
     <artifactId>yy-yao-web</artifactId>
     <name>yy-yao-web</name>
-    <description>Web层 - Controller, Filter, Interceptor</description>
+    <description>Web层 - HTTP接口(Controller)、参数校验、异常处理、拦截器</description>
 
     <dependencies>
+        <!-- ==================== 依赖业务编排层 ==================== -->
+        <dependency>
+            <groupId>com.yy.yao</groupId>
+            <artifactId>yy-yao-biz</artifactId>
+        </dependency>
+
+        <!-- 临时保留: 部分 Controller 直接使用 Service,后续重构后移除 -->
         <dependency>
             <groupId>com.yy.yao</groupId>
             <artifactId>yy-yao-service</artifactId>
         </dependency>
 
-        <!-- Spring Web -->
+        <!-- ==================== Spring Web ==================== -->
+
+        <!-- Spring Boot Web (for @RestController, @RequestMapping) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
-        <!-- Validation -->
+        <!-- Spring Validation (for @Valid, @NotNull) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
 
-        <!-- Actuator -->
+        <!-- ==================== 监控和运维 ==================== -->
+
+        <!-- Spring Boot Actuator (for /actuator/health, /actuator/metrics) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>

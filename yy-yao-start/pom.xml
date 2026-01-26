@@ -3,6 +3,7 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <groupId>com.yy.yao</groupId>
         <artifactId>yy-yao</artifactId>
@@ -11,28 +12,46 @@
 
     <artifactId>yy-yao-start</artifactId>
     <name>yy-yao-start</name>
-    <description>启动模块 - Application Main Class</description>
+    <description>启动模块 - Spring Boot应用启动入口、环境配置</description>
 
     <dependencies>
+        <!-- ==================== 依赖 Web 层(包含所有下层模块) ==================== -->
         <dependency>
             <groupId>com.yy.yao</groupId>
             <artifactId>yy-yao-web</artifactId>
         </dependency>
+
+        <!-- ==================== Spring Boot 依赖 ==================== -->
 
         <!-- Spring Data JPA (for @EntityScan, @EnableJpaRepositories) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
+
+        <!-- Spring Boot DevTools (optional, for hot reload) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <scope>runtime</scope>
+            <optional>true</optional>
+        </dependency>
     </dependencies>
 
     <build>
         <plugins>
+            <!-- Spring Boot Maven Plugin (for mvn spring-boot:run and fat jar) -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
                     <mainClass>com.yy.yao.YyYaoApplication</mainClass>
+                    <excludes>
+                        <exclude>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                        </exclude>
+                    </excludes>
                 </configuration>
             </plugin>
         </plugins>

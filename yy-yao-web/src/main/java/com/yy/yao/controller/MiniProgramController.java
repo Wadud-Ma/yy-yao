@@ -1,14 +1,17 @@
 package com.yy.yao.controller;
 
-import com.yy.yao.dto.*;
+import com.yy.yao.dto.ApiResponse;
+import com.yy.yao.dto.DivinationResponse;
+import com.yy.yao.dto.MiniProgramDivinationResponse;
+import com.yy.yao.dto.MiniProgramHexagramDTO;
 import com.yy.yao.entity.DivinationRecord;
+import com.yy.yao.mapper.MiniProgramMapper;
 import com.yy.yao.model.DivinationRequest;
 import com.yy.yao.model.DivinationResult;
 import com.yy.yao.model.Hexagram;
 import com.yy.yao.service.DivinationRecordService;
 import com.yy.yao.service.DivinationService;
 import com.yy.yao.service.HexagramService;
-import com.yy.yao.util.MiniProgramMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -41,6 +44,9 @@ public class MiniProgramController {
     @Autowired
     private DivinationRecordService divinationRecordService;
 
+    @Autowired
+    private MiniProgramMapper miniProgramMapper;
+
     @Value("${app.max-divinations-per-day:10}")
     private int maxDivinationsPerDay;
 
@@ -64,7 +70,7 @@ public class MiniProgramController {
 
         List<Hexagram> hexagrams = hexagramService.getAllHexagrams();
         List<MiniProgramHexagramDTO> dtos = hexagrams.stream()
-                .map(MiniProgramMapper::toMiniProgramHexagram)
+                .map(miniProgramMapper::toMiniProgramHexagram)
                 .collect(Collectors.toList());
 
         return ApiResponse.success(dtos);
@@ -83,7 +89,7 @@ public class MiniProgramController {
             return ApiResponse.error(404, "未找到卦象: " + id);
         }
 
-        MiniProgramHexagramDTO dto = MiniProgramMapper.toMiniProgramHexagram(hexagram);
+        MiniProgramHexagramDTO dto = miniProgramMapper.toMiniProgramHexagram(hexagram);
         return ApiResponse.success(dto);
     }
 
@@ -101,7 +107,7 @@ public class MiniProgramController {
             return ApiResponse.error(404, "未找到卦象: " + symbol);
         }
 
-        MiniProgramHexagramDTO dto = MiniProgramMapper.toMiniProgramHexagram(hexagram);
+        MiniProgramHexagramDTO dto = miniProgramMapper.toMiniProgramHexagram(hexagram);
         return ApiResponse.success(dto);
     }
 
@@ -114,7 +120,7 @@ public class MiniProgramController {
             @RequestHeader(value = "X-OpenID", required = false) String openid,
             @RequestBody DivinationRequest request) {
         log.info("小程序请求: 执行占卜 - OpenID: {}, 问题: {}, 方法: {}",
-                 openid, request.getQuestion(), request.getMethod());
+                openid, request.getQuestion(), request.getMethod());
 
         try {
             // TODO: 如果提供了OpenID，检查今日占卜次数限制（需要用户系统）
@@ -123,7 +129,7 @@ public class MiniProgramController {
             // DivinationService 返回 DivinationResult, 需要转换为 DivinationResponse
             DivinationResult result = divinationService.performDivination(request);
             DivinationResponse response = DivinationResponse.fromDivinationResult(result);
-            MiniProgramDivinationResponse dto = MiniProgramMapper.toMiniProgramResponse(response);
+            MiniProgramDivinationResponse dto = miniProgramMapper.toMiniProgramResponse(response);
 
             // 保存占卜记录
             if (openid != null && !openid.isEmpty()) {
@@ -143,72 +149,6 @@ public class MiniProgramController {
             return ApiResponse.error(500, "占卜失败: " + e.getMessage());
         }
     }
-
-    /**
-     * 用户注册/登录
-     * POST /api/mini/user/login
-     * 已禁用：MiniProgramUser 和 MiniProgramUserService 已删除
-     */
-    /* TODO: Restore when user system is re-implemented
-    @PostMapping("/user/login")
-    public ApiResponse<Map<String, Object>> userLogin(@RequestBody MiniProgramUser user) {
-        log.info("小程序用户登录: OpenID={}", user.getOpenid());
-
-        try {
-            MiniProgramUser savedUser = miniProgramUserService.createOrUpdateUser(user);
-            // TODO: Re-implement when user system is restored
-
-            // int remaining = miniProgramUserService.getRemainingDivinationCount(
-                    savedUser.getOpenid(), maxDivinationsPerDay);
-
-            Map<String, Object> result = new HashMap<>();
-            result.put("user", savedUser);
-            result.put("remainingDivinations", remaining);
-            result.put("maxDivinationsPerDay", maxDivinationsPerDay);
-
-            return ApiResponse.success(result);
-        } catch (Exception e) {
-            log.error("用户登录失败", e);
-            return ApiResponse.error(500, "登录失败: " + e.getMessage());
-        }
-    }
-    */
-
-    /* TODO: Restore when user system is re-implemented
-    /**
-     * 获取用户信息
-     * GET /api/mini/user/info
-     *
-    @GetMapping("/user/info")
-    public ApiResponse<Map<String, Object>> getUserInfo(
-            @RequestHeader("X-OpenID") String openid) {
-        log.info("获取用户信息: OpenID={}", openid);
-
-        try {
-            MiniProgramUser user = miniProgramUserService.findByOpenid(openid)
-                    .orElse(null);
-
-            if (user == null) {
-                return ApiResponse.error(404, "用户不存在");
-            }
-
-            // TODO: Re-implement when user system is restored
-
-
-            // int remaining = miniProgramUserService.getRemainingDivinationCount(openid, maxDivinationsPerDay);
-
-            Map<String, Object> result = new HashMap<>();
-            result.put("user", user);
-            result.put("remainingDivinations", remaining);
-            result.put("maxDivinationsPerDay", maxDivinationsPerDay);
-
-            return ApiResponse.success(result);
-        } catch (Exception e) {
-            log.error("获取用户信息失败", e);
-            return ApiResponse.error(500, "获取失败: " + e.getMessage());
-        }
-    }
-    */
 
     /**
      * 获取占卜历史记录（分页）
@@ -239,27 +179,6 @@ public class MiniProgramController {
             return ApiResponse.error(500, "获取失败: " + e.getMessage());
         }
     }
-
-    /* TODO: Implement findRecentRecords in DivinationRecordService
-    /**
-     * 获取最近的占卜记录
-     * GET /api/mini/history/recent
-     *
-    @GetMapping("/history/recent")
-    public ApiResponse<List<DivinationRecord>> getRecentHistory(
-            @RequestHeader("X-OpenID") String openid) {
-        log.info("获取最近占卜记录: OpenID={}", openid);
-
-        try {
-            Long userId = convertOpenIdToUserId(openid);
-            List<DivinationRecord> records = divinationRecordService.findRecentRecords(userId);
-            return ApiResponse.success(records);
-        } catch (Exception e) {
-            log.error("获取最近记录失败", e);
-            return ApiResponse.error(500, "获取失败: " + e.getMessage());
-        }
-    }
-    */
 
     /**
      * 获取收藏的占卜记录
@@ -398,63 +317,6 @@ public class MiniProgramController {
             return ApiResponse.error(500, "获取失败: " + e.getMessage());
         }
     }
-
-    /* TODO: Restore when UserSettings system is re-implemented
-    /**
-     * 获取用户设置
-     * GET /api/mini/settings
-     *
-    @GetMapping("/settings")
-    public ApiResponse<UserSettings> getSettings(
-            @RequestHeader("X-OpenID") String openid) {
-        log.info("获取用户设置: OpenID={}", openid);
-
-        try {
-            UserSettings settings = userSettingsService.getOrCreateSettings(openid);
-            return ApiResponse.success(settings);
-        } catch (Exception e) {
-            log.error("获取用户设置失败", e);
-            return ApiResponse.error(500, "获取失败: " + e.getMessage());
-        }
-    }
-
-    /**
-     * 更新用户设置
-     * PATCH /api/mini/settings
-     *
-    @PatchMapping("/settings")
-    public ApiResponse<UserSettings> updateSettings(
-            @RequestHeader("X-OpenID") String openid,
-            @RequestBody Map<String, Object> updates) {
-        log.info("更新用户设置: OpenID={}, updates={}", openid, updates);
-
-        try {
-            UserSettings settings = userSettingsService.updateSettings(openid, updates);
-            return ApiResponse.success(settings);
-        } catch (Exception e) {
-            log.error("更新用户设置失败", e);
-            return ApiResponse.error(500, "更新失败: " + e.getMessage());
-        }
-    }
-
-    /**
-     * 重置用户设置为默认值
-     * POST /api/mini/settings/reset
-     *
-    @PostMapping("/settings/reset")
-    public ApiResponse<UserSettings> resetSettings(
-            @RequestHeader("X-OpenID") String openid) {
-        log.info("重置用户设置: OpenID={}", openid);
-
-        try {
-            UserSettings settings = userSettingsService.resetSettings(openid);
-            return ApiResponse.success(settings);
-        } catch (Exception e) {
-            log.error("重置用户设置失败", e);
-            return ApiResponse.error(500, "重置失败: " + e.getMessage());
-        }
-    }
-    */
 
     /**
      * 清除历史记录
