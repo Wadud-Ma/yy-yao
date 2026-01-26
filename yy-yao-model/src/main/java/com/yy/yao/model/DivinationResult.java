@@ -88,24 +88,4 @@ public class DivinationResult {
          */
         private int value;
     }
-
-    /**
-     * 卜卦方法枚举
-     */
-    public enum DivinationMethod {
-        COIN("铜钱法"),
-        YARROW("蓍草法"),
-        NUMBER("数字法"),
-        TIME("时间起卦法");
-
-        private final String description;
-
-        DivinationMethod(String description) {
-            this.description = description;
-        }
-
-        public String getDescription() {
-            return description;
-        }
-    }
 }

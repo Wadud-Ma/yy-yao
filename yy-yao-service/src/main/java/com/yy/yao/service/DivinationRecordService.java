@@ -16,11 +16,12 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
  * 占卜记录服务
+ * 使用 Java 21 新特性优化代码
  */
 @Slf4j
 @Service
@@ -32,37 +33,39 @@ public class DivinationRecordService {
 
     /**
      * 保存占卜记录
+     * @param userId 用户ID
+     * @param result 占卜结果
      */
     @Transactional
-    public DivinationRecord saveDivinationRecord(String openid, DivinationResult result) {
-        DivinationRecord record = DivinationRecord.builder()
-                .openid(openid)
+    public DivinationRecord saveDivinationRecord(Long userId, DivinationResult result) {
+        var record = DivinationRecord.builder()
+                .userId(userId)
                 .question(result.getQuestion())
-                .divinationMethod(result.getMethod())
+                .method(result.getMethod())
                 .divinationTime(result.getTimestamp())
                 .interpretation(result.getInterpretation())
                 .aiInterpretation(result.getAiInterpretation())
                 .usedAi(result.getAiInterpretation() != null && !result.getAiInterpretation().isEmpty())
-                .isFavorite(false)
+                .isFavorited(false)
                 .build();
 
         // 设置本卦信息
-        if (result.getOriginalHexagram() != null) {
-            Hexagram original = result.getOriginalHexagram();
-            record.setOriginalHexagramId(original.getNumber());
-            record.setOriginalHexagramName(original.getName());
-            record.setOriginalHexagramBinary(original.getBinaryCode());
+        var originalHexagram = result.getOriginalHexagram();
+        if (originalHexagram != null) {
+            record.setOriginalHexagramId(originalHexagram.getNumber());
+            record.setOriginalHexagramName(originalHexagram.getName());
+            record.setOriginalHexagramBinary(originalHexagram.getBinaryCode());
         }
 
         // 设置变卦信息
-        if (result.getChangedHexagram() != null) {
-            Hexagram changed = result.getChangedHexagram();
-            record.setChangedHexagramId(changed.getNumber());
-            record.setChangedHexagramName(changed.getName());
-            record.setChangedHexagramBinary(changed.getBinaryCode());
+        var changedHexagram = result.getChangedHexagram();
+        if (changedHexagram != null) {
+            record.setChangedHexagramId(changedHexagram.getNumber());
+            record.setChangedHexagramName(changedHexagram.getName());
+            record.setChangedHexagramBinary(changedHexagram.getBinaryCode());
         }
 
-        // 设置动爻列表
+        // 设置动爻列表（JSON序列化）
         if (result.getChangingLines() != null && !result.getChangingLines().isEmpty()) {
             try {
                 record.setChangingLines(objectMapper.writeValueAsString(result.getChangingLines()));
@@ -71,7 +74,7 @@ public class DivinationRecordService {
             }
         }
 
-        // 设置六爻详细信息
+        // 设置六爻详细信息（JSON序列化）
         if (result.getLines() != null && !result.getLines().isEmpty()) {
             try {
                 record.setLinesDetail(objectMapper.writeValueAsString(result.getLines()));
@@ -93,109 +96,90 @@ public class DivinationRecordService {
     /**
      * 查找用户的所有记录
      */
-    public Page<DivinationRecord> findUserRecords(String openid, Pageable pageable) {
-        return recordRepository.findByOpenidOrderByCreatedAtDesc(openid, pageable);
+    public Page<DivinationRecord> findUserRecords(Long userId, Pageable pageable) {
+        return recordRepository.findByUserIdOrderByCreatedAtDesc(userId, pageable);
     }
 
     /**
      * 查找用户的收藏记录
      */
-    public Page<DivinationRecord> findUserFavorites(String openid, Pageable pageable) {
-        return recordRepository.findByOpenidAndIsFavoriteTrueOrderByCreatedAtDesc(openid, pageable);
-    }
-
-    /**
-     * 查找用户最近的N条记录
-     */
-    public List<DivinationRecord> findRecentRecords(String openid) {
-        return recordRepository.findTop10ByOpenidOrderByCreatedAtDesc(openid);
+    public Page<DivinationRecord> findUserFavorites(Long userId, Pageable pageable) {
+        return recordRepository.findByUserIdAndIsFavoritedOrderByCreatedAtDesc(userId, true, pageable);
     }
 
     /**
      * 查找指定时间范围内的记录
      */
-    public List<DivinationRecord> findByTimeRange(String openid, LocalDateTime startTime, LocalDateTime endTime) {
-        return recordRepository.findByOpenidAndTimeRange(openid, startTime, endTime);
+    public Page<DivinationRecord> findByTimeRange(Long userId, LocalDateTime startTime, LocalDateTime endTime, Pageable pageable) {
+        return recordRepository.findByUserIdAndCreatedAtBetweenOrderByCreatedAtDesc(userId, startTime, endTime, pageable);
     }
 
     /**
      * 统计用户今日占卜次数
      */
-    public long countTodayDivinations(String openid) {
-        LocalDateTime todayStart = LocalDateTime.of(LocalDate.now(), LocalTime.MIN);
-        return recordRepository.countTodayDivinations(openid, todayStart);
+    public long countTodayDivinations(Long userId) {
+        var todayStart = LocalDateTime.of(LocalDate.now(), LocalTime.MIN);
+        return recordRepository.countTodayDivinations(userId, todayStart);
     }
 
     /**
      * 统计用户总占卜次数
      */
-    public long countTotalDivinations(String openid) {
-        return recordRepository.countByOpenid(openid);
+    public long countTotalDivinations(Long userId) {
+        return recordRepository.countByUserId(userId);
     }
 
     /**
      * 切换收藏状态
      */
     @Transactional
-    public boolean toggleFavorite(Long recordId, String openid) {
-        Optional<DivinationRecord> recordOpt = recordRepository.findById(recordId);
-        if (recordOpt.isEmpty()) {
-            return false;
-        }
-
-        DivinationRecord record = recordOpt.get();
-        // 验证记录归属
-        if (!record.getOpenid().equals(openid)) {
-            log.warn("用户 {} 尝试收藏不属于自己的记录 {}", openid, recordId);
-            return false;
-        }
-
-        record.setIsFavorite(!record.getIsFavorite());
-        recordRepository.save(record);
-        return true;
+    public boolean toggleFavorite(Long recordId, Long userId) {
+        return recordRepository.findById(recordId)
+                .filter(record -> Objects.equals(record.getUserId(), userId))
+                .map(record -> {
+                    record.setIsFavorited(!record.getIsFavorited());
+                    recordRepository.save(record);
+                    return true;
+                })
+                .orElseGet(() -> {
+                    log.warn("记录不存在或用户 {} 无权访问记录 {}", userId, recordId);
+                    return false;
+                });
     }
 
     /**
      * 添加备注
      */
     @Transactional
-    public boolean addRemark(Long recordId, String openid, String remark) {
-        Optional<DivinationRecord> recordOpt = recordRepository.findById(recordId);
-        if (recordOpt.isEmpty()) {
-            return false;
-        }
-
-        DivinationRecord record = recordOpt.get();
-        // 验证记录归属
-        if (!record.getOpenid().equals(openid)) {
-            log.warn("用户 {} 尝试修改不属于自己的记录 {}", openid, recordId);
-            return false;
-        }
-
-        record.setRemark(remark);
-        recordRepository.save(record);
-        return true;
+    public boolean addRemark(Long recordId, Long userId, String remark) {
+        return recordRepository.findById(recordId)
+                .filter(record -> Objects.equals(record.getUserId(), userId))
+                .map(record -> {
+                    record.setRemark(remark);
+                    recordRepository.save(record);
+                    return true;
+                })
+                .orElseGet(() -> {
+                    log.warn("记录不存在或用户 {} 无权访问记录 {}", userId, recordId);
+                    return false;
+                });
     }
 
     /**
      * 删除记录
      */
     @Transactional
-    public boolean deleteRecord(Long recordId, String openid) {
-        Optional<DivinationRecord> recordOpt = recordRepository.findById(recordId);
-        if (recordOpt.isEmpty()) {
-            return false;
-        }
-
-        DivinationRecord record = recordOpt.get();
-        // 验证记录归属
-        if (!record.getOpenid().equals(openid)) {
-            log.warn("用户 {} 尝试删除不属于自己的记录 {}", openid, recordId);
-            return false;
-        }
-
-        recordRepository.delete(record);
-        return true;
+    public boolean deleteRecord(Long recordId, Long userId) {
+        return recordRepository.findById(recordId)
+                .filter(record -> Objects.equals(record.getUserId(), userId))
+                .map(record -> {
+                    recordRepository.delete(record);
+                    return true;
+                })
+                .orElseGet(() -> {
+                    log.warn("记录不存在或用户 {} 无权访问记录 {}", userId, recordId);
+                    return false;
+                });
     }
 
     /**
@@ -216,28 +200,29 @@ public class DivinationRecordService {
      * 清除用户的所有历史记录（保留收藏）
      */
     @Transactional
-    public void clearHistory(String openid) {
-        log.info("清除用户历史记录: OpenID={}", openid);
-        List<DivinationRecord> records = recordRepository.findTop10ByOpenidOrderByCreatedAtDesc(openid);
-        // 只删除未收藏的记录
+    public void clearHistory(Long userId) {
+        log.info("清除用户历史记录: UserId={}", userId);
+        var records = recordRepository.findByUserIdOrderByCreatedAtDesc(userId, Pageable.unpaged()).getContent();
+
+        // 使用 Stream API 只删除未收藏的记录
         records.stream()
-                .filter(r -> !r.getIsFavorite())
+                .filter(r -> !r.getIsFavorited())
                 .forEach(recordRepository::delete);
     }
 
     /**
-     * 清除用户的所有收藏记录
+     * 取消用户的所有收藏
      */
     @Transactional
-    public void clearFavorites(String openid) {
-        log.info("清除用户收藏记录: OpenID={}", openid);
-        List<DivinationRecord> records = recordRepository.findTop10ByOpenidOrderByCreatedAtDesc(openid);
-        // 只删除收藏的记录，或取消收藏
-        records.stream()
-                .filter(DivinationRecord::getIsFavorite)
-                .forEach(record -> {
-                    record.setIsFavorite(false);
-                    recordRepository.save(record);
-                });
+    public void clearFavorites(Long userId) {
+        log.info("清除用户收藏记录: UserId={}", userId);
+        var records = recordRepository.findByUserIdAndIsFavoritedOrderByCreatedAtDesc(userId, true, Pageable.unpaged()).getContent();
+
+        // 取消收藏标记
+        records.forEach(record -> {
+            record.setIsFavorited(false);
+            recordRepository.save(record);
+        });
     }
+
 }

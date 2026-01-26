@@ -21,7 +21,7 @@ public class DivinationRequest {
     /**
      * 卜卦方法
      */
-    private DivinationResult.DivinationMethod method = DivinationResult.DivinationMethod.COIN;
+    private DivinationMethod method = DivinationMethod.COIN;
 
     /**
      * 是否需要AI解读

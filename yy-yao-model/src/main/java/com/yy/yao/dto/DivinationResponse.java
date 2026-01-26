@@ -1,5 +1,6 @@
 package com.yy.yao.dto;
 
+import com.yy.yao.model.DivinationMethod;
 import com.yy.yao.model.DivinationResult;
 import com.yy.yao.model.Hexagram;
 import lombok.AllArgsConstructor;
@@ -47,7 +48,7 @@ public class DivinationResponse {
     /**
      * 卜卦方法
      */
-    private DivinationResult.DivinationMethod method;
+    private DivinationMethod method;
 
     /**
      * 传统解卦

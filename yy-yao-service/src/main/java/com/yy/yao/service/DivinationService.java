@@ -22,6 +22,7 @@ public class DivinationService {
 
     private final DivinationAlgorithm algorithm;
     private final HexagramRepository hexagramRepository;
+    private final HexagramMapper hexagramMapper;
     private final InterpretationService interpretationService;
 
     /**
@@ -36,6 +37,7 @@ public class DivinationService {
         // 2. 计算本卦
         String originalBinary = algorithm.linesToBinary(lines);
         Hexagram originalHexagram = hexagramRepository.findByBinary(originalBinary)
+                .map(hexagramMapper::toModel)
                 .orElseThrow(() -> new RuntimeException("未找到对应的卦象: " + originalBinary));
 
         // 3. 计算动爻和变卦
@@ -44,7 +46,9 @@ public class DivinationService {
 
         if (!changingLines.isEmpty()) {
             String changedBinary = algorithm.calculateChangedBinary(lines);
-            changedHexagram = hexagramRepository.findByBinary(changedBinary).orElse(null);
+            changedHexagram = hexagramRepository.findByBinary(changedBinary)
+                    .map(hexagramMapper::toModel)
+                    .orElse(null);
         }
 
         // 4. 生成解卦
@@ -86,12 +90,13 @@ public class DivinationService {
             return algorithm.customMethod(request.getCustomLines());
         }
 
-        // 根据卜卦方法生成
+        // 根据卜卦方法生成（使用 Java 21 增强的 switch 表达式）
         return switch (request.getMethod()) {
             case COIN -> algorithm.coinMethod();
             case YARROW -> algorithm.yarrowMethod();
-            case NUMBER -> algorithm.numberMethod();
-            case TIME -> algorithm.timeMethod();
+            case NUMBER, MEIHUA -> algorithm.numberMethod();
+            case TIME, DAILY -> algorithm.timeMethod();
+            case MANUAL, QIAN -> algorithm.coinMethod();  // 手工和抽签默认使用铜钱法
         };
     }
 
@@ -99,13 +104,15 @@ public class DivinationService {
      * 查询卦象
      */
     public Optional<Hexagram> getHexagramByNumber(int number) {
-        return hexagramRepository.findByNumber(number);
+        return hexagramRepository.findByNumber(number)
+                .map(hexagramMapper::toModel);
     }
 
     /**
      * 获取所有卦象
      */
     public List<Hexagram> getAllHexagrams() {
-        return hexagramRepository.findAll();
+        var entities = hexagramRepository.findAll();
+        return hexagramMapper.toModelList(entities);
     }
 }

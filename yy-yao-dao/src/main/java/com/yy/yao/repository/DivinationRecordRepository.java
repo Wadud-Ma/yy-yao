@@ -1,6 +1,7 @@
 package com.yy.yao.repository;
 
 import com.yy.yao.entity.DivinationRecord;
+import com.yy.yao.model.DivinationMethod;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,77 +13,89 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 /**
- * 占卜记录仓储
+ * 占卜记录 Repository
+ * 对应表: divination_records
  */
 @Repository
 public interface DivinationRecordRepository extends JpaRepository<DivinationRecord, Long> {
 
     /**
-     * 根据OpenID查找所有记录 (分页)
-     */
-    Page<DivinationRecord> findByOpenidOrderByCreatedAtDesc(String openid, Pageable pageable);
-
-    /**
-     * 根据用户ID查找所有记录 (分页)
+     * 根据用户ID查询占卜记录
      */
     Page<DivinationRecord> findByUserIdOrderByCreatedAtDesc(Long userId, Pageable pageable);
 
     /**
-     * 查找用户的收藏记录
+     * 查询用户的收藏记录
      */
-    Page<DivinationRecord> findByOpenidAndIsFavoriteTrueOrderByCreatedAtDesc(String openid, Pageable pageable);
+    Page<DivinationRecord> findByUserIdAndIsFavoritedOrderByCreatedAtDesc(
+            Long userId,
+            Boolean isFavorited,
+            Pageable pageable
+    );
 
     /**
-     * 查找指定时间范围内的记录
+     * 根据占卜方式查询记录
      */
-    @Query("SELECT d FROM DivinationRecord d WHERE d.openid = :openid " +
-           "AND d.createdAt BETWEEN :startTime AND :endTime " +
-           "ORDER BY d.createdAt DESC")
-    List<DivinationRecord> findByOpenidAndTimeRange(
-            @Param("openid") String openid,
-            @Param("startTime") LocalDateTime startTime,
-            @Param("endTime") LocalDateTime endTime
+    Page<DivinationRecord> findByUserIdAndMethodOrderByCreatedAtDesc(
+            Long userId,
+            DivinationMethod method,
+            Pageable pageable
     );
+
+    /**
+     * 查询用户占卜记录数量
+     */
+    Long countByUserId(Long userId);
+
+    /**
+     * 根据时间范围查询
+     */
+    Page<DivinationRecord> findByUserIdAndCreatedAtBetweenOrderByCreatedAtDesc(
+            Long userId,
+            LocalDateTime startTime,
+            LocalDateTime endTime,
+            Pageable pageable
+    );
+
+    /**
+     * 查询包含特定卦象的占卜记录
+     */
+    @Query("SELECT dr FROM DivinationRecord dr WHERE " +
+            "(dr.originalHexagramId = :hexagramId OR dr.changedHexagramId = :hexagramId) " +
+            "ORDER BY dr.createdAt DESC")
+    Page<DivinationRecord> findByHexagramId(@Param("hexagramId") Integer hexagramId, Pageable pageable);
+
+    /**
+     * 统计用户不同占卜方式的使用次数
+     */
+    @Query("SELECT dr.method, COUNT(dr) FROM DivinationRecord dr " +
+            "WHERE dr.userId = :userId " +
+            "GROUP BY dr.method")
+    List<Object[]> countByMethod(@Param("userId") Long userId);
+
+    /**
+     * 统计卦象出现频率
+     */
+    @Query("SELECT dr.originalHexagramId, COUNT(dr) FROM DivinationRecord dr " +
+            "GROUP BY dr.originalHexagramId " +
+            "ORDER BY COUNT(dr) DESC")
+    List<Object[]> statisticsHexagramUsage();
 
     /**
      * 统计用户今日占卜次数
      */
-    @Query("SELECT COUNT(d) FROM DivinationRecord d WHERE d.openid = :openid " +
-           "AND d.createdAt >= :todayStart")
-    long countTodayDivinations(@Param("openid") String openid, @Param("todayStart") LocalDateTime todayStart);
-
-    /**
-     * 统计用户总占卜次数
-     */
-    long countByOpenid(String openid);
-
-    /**
-     * 根据卦象ID查找记录
-     */
-    Page<DivinationRecord> findByOriginalHexagramIdOrderByCreatedAtDesc(Integer hexagramId, Pageable pageable);
-
-    /**
-     * 查找最近的N条记录
-     */
-    List<DivinationRecord> findTop10ByOpenidOrderByCreatedAtDesc(String openid);
-
-    /**
-     * 删除用户的所有记录
-     */
-    void deleteByOpenid(String openid);
+    @Query("SELECT COUNT(dr) FROM DivinationRecord dr WHERE dr.userId = :userId " +
+            "AND dr.createdAt >= :todayStart")
+    long countTodayDivinations(@Param("userId") Long userId, @Param("todayStart") LocalDateTime todayStart);
 
     /**
      * 统计系统总占卜次数
      */
-    @Query("SELECT COUNT(d) FROM DivinationRecord d")
+    @Query("SELECT COUNT(dr) FROM DivinationRecord dr")
     long countTotalDivinations();
 
     /**
-     * 统计指定时间段内的占卜次数
+     * 根据本卦ID查询占卜记录（按创建时间倒序）
      */
-    @Query("SELECT COUNT(d) FROM DivinationRecord d WHERE d.createdAt BETWEEN :startTime AND :endTime")
-    long countDivinationsByTimeRange(
-            @Param("startTime") LocalDateTime startTime,
-            @Param("endTime") LocalDateTime endTime
-    );
+    Page<DivinationRecord> findByOriginalHexagramIdOrderByCreatedAtDesc(Integer hexagramId, Pageable pageable);
 }
