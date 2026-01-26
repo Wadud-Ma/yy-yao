@@ -1,6 +1,7 @@
 package com.yy.yao.service;
 
-import com.yy.yao.model.DivinationResult;
+import com.yy.yao.model.domain.DivinationResult;
+import com.yy.yao.service.impl.DivinationAlgorithm;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

@@ -1,10 +1,11 @@
 package com.yy.yao.controller;
 
-import com.yy.yao.controller.DivinationController;
-import com.yy.yao.model.DivinationRequest;
-import com.yy.yao.model.DivinationResult;
-import com.yy.yao.model.Hexagram;
-import com.yy.yao.service.DivinationService;
+import com.yy.yao.web.controller.DivinationController;
+import com.yy.yao.model.domain.DivinationMethod;
+import com.yy.yao.model.domain.DivinationRequest;
+import com.yy.yao.model.domain.DivinationResult;
+import com.yy.yao.model.domain.Hexagram;
+import com.yy.yao.service.impl.DivinationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -46,7 +47,7 @@ class DivinationControllerTest {
         DivinationResult mockResult = DivinationResult.builder()
                 .timestamp(LocalDateTime.now())
                 .question("测试问题")
-                .method(DivinationResult.DivinationMethod.COIN)
+                .method(DivinationMethod.COIN)
                 .lines(new ArrayList<>())
                 .changingLines(new ArrayList<>())
                 .interpretation("测试解释")
