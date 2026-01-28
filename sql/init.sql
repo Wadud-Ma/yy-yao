@@ -1,6 +1,7 @@
 -- ============================================
 -- 1. 八卦表
 -- ============================================
+DROP TABLE IF EXISTS trigrams;
 CREATE TABLE trigrams (
                           id TINYINT UNSIGNED PRIMARY KEY,
                           symbol CHAR(3) NOT NULL COMMENT '如 111',
@@ -13,6 +14,7 @@ CREATE TABLE trigrams (
 -- ============================================
 -- 2. 六十四卦主表
 -- ============================================
+DROP TABLE IF EXISTS hexagrams;
 CREATE TABLE hexagrams (
                            id TINYINT UNSIGNED PRIMARY KEY COMMENT '卦序 1-64',
                            symbol CHAR(6) NOT NULL COMMENT '六爻符号',
@@ -46,6 +48,7 @@ CREATE TABLE hexagrams (
 -- ============================================
 -- 3. 爻辞表
 -- ============================================
+DROP TABLE IF EXISTS hexagram_lines;
 CREATE TABLE hexagram_lines (
                                 id SMALLINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
                                 hexagram_id TINYINT UNSIGNED NOT NULL,
@@ -69,6 +72,7 @@ CREATE TABLE hexagram_lines (
 -- ============================================
 -- 4. 文言传（仅乾坤两卦）
 -- ============================================
+DROP TABLE IF EXISTS wenyan;
 CREATE TABLE wenyan (
                         id TINYINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
                         hexagram_id TINYINT UNSIGNED NOT NULL COMMENT '1=乾 2=坤',
@@ -82,6 +86,7 @@ CREATE TABLE wenyan (
 -- ============================================
 -- 5. 系辞传
 -- ============================================
+DROP TABLE IF EXISTS xici;
 CREATE TABLE xici (
                       id SMALLINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
                       part ENUM('upper', 'lower') NOT NULL COMMENT '上篇/下篇',
@@ -95,6 +100,7 @@ CREATE TABLE xici (
 -- ============================================
 -- 6. 序卦传
 -- ============================================
+DROP TABLE IF EXISTS xugua;
 CREATE TABLE xugua (
                        id TINYINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
                        hexagram_id TINYINT UNSIGNED COMMENT '关联卦',
@@ -107,6 +113,7 @@ CREATE TABLE xugua (
 -- ============================================
 -- 7. 说卦传
 -- ============================================
+DROP TABLE IF EXISTS shuogua;
 CREATE TABLE shuogua (
                          id TINYINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
                          chapter TINYINT UNSIGNED COMMENT '章节',
@@ -119,6 +126,7 @@ CREATE TABLE shuogua (
 -- ============================================
 -- 8. 杂卦传
 -- ============================================
+DROP TABLE IF EXISTS zagua;
 CREATE TABLE zagua (
                        id TINYINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
                        hexagram_id TINYINT UNSIGNED COMMENT '关联卦',
@@ -131,6 +139,7 @@ CREATE TABLE zagua (
 -- ============================================
 -- 9. 用户卜卦记录
 -- ============================================
+DROP TABLE IF EXISTS divination_records;
 CREATE TABLE divination_records (
                                     id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
                                     user_id BIGINT UNSIGNED NOT NULL,
