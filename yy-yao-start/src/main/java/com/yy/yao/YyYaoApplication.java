@@ -7,11 +7,9 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 /**
  * 易经卜卦服务启动类
- *
  * 由于各模块使用独立的包前缀,需要显式配置包扫描范围:
  * - ComponentScan: 扫描各模块的组件(@Component, @Service, @Controller等)
  * - EnableJpaRepositories: 扫描Repository接口
- *
  * 注意: @EntityScan 已移除,实体类由 @SpringBootApplication 自动扫描
  */
 @SpringBootApplication(scanBasePackages = {
