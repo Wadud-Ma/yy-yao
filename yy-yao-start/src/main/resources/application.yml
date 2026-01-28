@@ -48,19 +48,6 @@ spring:
       max-file-size: 10MB
       max-request-size: 10MB
 
-  # Mail Configuration (if email notification is enabled)
-  mail:
-    host: ${MAIL_HOST:smtp.gmail.com}
-    port: ${MAIL_PORT:587}
-    username: ${MAIL_USERNAME:}
-    password: ${MAIL_PASSWORD:}
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
-
 # Server Configuration
 server:
   port: 9091
@@ -84,14 +71,6 @@ storage:
   local:
     base-path: ./uploads
     base-url: http://localhost:8080/uploads
-
-# Notification Configuration
-notification:
-  email:
-    enabled: ${NOTIFICATION_EMAIL_ENABLED:false}
-    from: ${NOTIFICATION_EMAIL_FROM:noreply@yy-yao.com}
-  admin:
-    email: ${NOTIFICATION_ADMIN_EMAIL:}
 
 # Actuator Configuration
 management:
